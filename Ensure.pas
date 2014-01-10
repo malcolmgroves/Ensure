@@ -26,12 +26,14 @@ uses
 type
   TEnsure = class
   public
-    class function ParameterAssigned<T : class>(Parameter : T; const Description : string = '') : T;
+    class function ParameterAssigned<T : class>(Parameter : T; const Description : string = '') : T; overload;
+    class function ParameterNotEmpty(const Parameter : string; const Description : string = '') : string; overload;
   end;
 
   EEnsureException = class(Exception);
     EEnsureParameterException = class(EEnsureException);
       EEnsureParameterNilException = class(EEnsureParameterException);
+      EEnsureParameterEmptyException = class(EEnsureParameterException);
 
 implementation
 
@@ -41,6 +43,15 @@ class function TEnsure.ParameterAssigned<T>(Parameter: T; const Description : st
 begin
   if not Assigned(Parameter) then
     raise EEnsureParameterNilException.Create(T.ClassName +  ' parameter is nil : ' + Description);
+
+  Result := Parameter;
+end;
+
+class function TEnsure.ParameterNotEmpty(const Parameter,
+  Description: string): string;
+begin
+  if Parameter = '' then
+    raise EEnsureParameterEmptyException.Create('String parameter is empty : ' + Description);
 
   Result := Parameter;
 end;

@@ -29,9 +29,22 @@ type
   published
     procedure TestNilClassParameterAssigned;
     procedure TestNonNilClassParameterAssigned;
+    procedure TestEmptyStringParameterNotEmpty;
+    procedure TestNonEmptyStringParameterNotEmpty;
   end;
 
 implementation
+
+procedure TestTEnsure.TestEmptyStringParameterNotEmpty;
+  procedure Foo(const MyString : String);
+  begin
+    TEnsure.ParameterNotEmpty(MyString, 'MyString');
+  end;
+begin
+  ExpectedException := EEnsureParameterEmptyException;
+  Foo('');
+  StopExpectingException;
+end;
 
 procedure TestTEnsure.TestNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
@@ -42,6 +55,16 @@ begin
   ExpectedException := EEnsureParameterNilException;
   Foo(nil);
   StopExpectingException;
+end;
+
+
+procedure TestTEnsure.TestNonEmptyStringParameterNotEmpty;
+  procedure Foo(const MyString : String);
+  begin
+    TEnsure.ParameterNotEmpty(MyString, 'MyString');
+  end;
+begin
+  Foo('Hello');
 end;
 
 procedure TestTEnsure.TestNonNilClassParameterAssigned;
@@ -59,6 +82,7 @@ begin
     MyObj.Free;
   end;
 end;
+
 
 initialization
   // Register any test cases with the test runner
