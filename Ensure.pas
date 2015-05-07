@@ -28,36 +28,37 @@ type
     function IsAssigned(Subject : T; const Name : string = '') : T;
   end;
 
-  IStringTests = interface
-    function NotEmpty(const Subject : string; const Name : String = '') : string;
-  end;
-
-  IDirectoryTests = interface(IStringTests)
-    function Exists(const Path : string; const Description : string = '') : string;
-  end;
-
-  TEnsure = class
-  public
-    class function InstanceOf<T : class> : IInstanceTests<T>;
-    class function &String : IStringTests;
-    // file related
-    class function DirExists(const Path : string): string; overload;
-  end;
-
   TInstanceTests<T : class> = class(TInterfacedObject, IInstanceTests<T>)
   public
     function IsAssigned(Subject : T; const Name : string = '') : T;
   end;
 
-  TStringTests = class(TInterfacedObject, IStringTests)
+  TInstanceTests2 = class
+    class function IsAssigned<T : class>(Subject : T; const Name : string = '') : T;
+  end;
+  TInstanceTestsClass = class of TInstanceTEsts2;
+
+  TStringTests = class
+    class function NotEmpty(const Subject : string; const Name : String = '') : string;
+  end;
+  TStringTestsClass = class of TStringTests;
+
+
+  TDirectoryTests = class(TStringTests)
+    class function Exists(const Path : string; const Description : string = '') : string;
+  end;
+  TDirectoryTestsClass = class of TDirectoryTests;
+
+  TEnsure = class
   public
-    function NotEmpty(const Subject: string; const Name: string = ''): string;
+    class function InstanceOf<T : class> : IInstanceTests<T>;
+    class function Instance : TInstanceTestsClass;
+    class function &String : TStringTestsClass;
+    // file related
+    class function Directory: TDirectoryTestsClass;
   end;
 
-  TDirectoryTests = class(TStringTests, IDirectoryTests)
-  public
-    function Exists(const Path: string; const Description: string = ''): string;
-  end;
+
 
   EEnsureException = class(Exception);
     EEnsureParameterException = class(EEnsureException);
@@ -80,22 +81,24 @@ uses
 { Ensure }
 
 
+class function TEnsure.Instance: TInstanceTestsClass;
+begin
+  Result := TInstanceTests2;
+end;
+
 class function TEnsure.InstanceOf<T> : IInstanceTests<T>;
 begin
   Result := TInstanceTests<T>.Create;
 end;
 
-class function TEnsure.&String: IStringTests;
+class function TEnsure.&String: TStringTestsClass;
 begin
-  Result := TStringTests.Create;
+  Result := TStringTests;
 end;
 
-class function TEnsure.DirExists(const Path : string): string;
+class function TEnsure.Directory: TDirectoryTestsClass;
 begin
-  if not TDirectory.Exists(Path) then
-    raise EEnsurePathNotFound.Create(Path);
-
-  Result := Path;
+  Result := TDirectoryTests;
 end;
 
 { EEnsurePathNotFound }
@@ -117,7 +120,7 @@ end;
 
 { TStringTests }
 
-function TStringTests.NotEmpty(const Subject, Name: string): string;
+class function TStringTests.NotEmpty(const Subject, Name: string): string;
 begin
   if Subject = '' then
     raise EEnsureParameterEmptyException.Create('String parameter is empty : ' + Name);
@@ -127,12 +130,22 @@ end;
 
 { TPathTests }
 
-function TDirectoryTests.Exists(const Path, Description: string): string;
+class function TDirectoryTests.Exists(const Path, Description: string): string;
 begin
-  if not TPath.Exists(Path) then
+  if not TDirectory.Exists(Path) then
     raise EEnsurePathNotFound.Create(Path);
 
   Result := Path;
+end;
+
+{ TInstanceTests }
+
+class function TInstanceTests2.IsAssigned<T>(Subject: T; const Name: string): T;
+begin
+  if not Assigned(Subject) then
+    raise EEnsureParameterNilException.Create(T.ClassName +  ' parameter is nil : ' + Name);
+
+  Result := Subject;
 end;
 
 end.

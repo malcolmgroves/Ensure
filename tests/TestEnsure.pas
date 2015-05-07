@@ -50,6 +50,7 @@ procedure TestTEnsure.TestNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
     TEnsure.InstanceOf<TObject>.IsAssigned(MyObject, 'MyObject');
+    TEnsure.Instance.IsAssigned<TObject>(MyObject, 'MyObject');
   end;
 begin
   ExpectedException := EEnsureParameterNilException;
