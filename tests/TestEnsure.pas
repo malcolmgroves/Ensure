@@ -38,7 +38,7 @@ implementation
 procedure TestTEnsure.TestEmptyStringParameterNotEmpty;
   procedure Foo(const MyString : String);
   begin
-    TEnsure.ParameterNotEmpty(MyString, 'MyString');
+    TEnsure.String.NotEmpty(MyString, 'MyString');
   end;
 begin
   ExpectedException := EEnsureParameterEmptyException;
@@ -49,7 +49,7 @@ end;
 procedure TestTEnsure.TestNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.ParameterAssigned<TObject>(MyObject, 'MyObject');
+    TEnsure.InstanceOf<TObject>.IsAssigned(MyObject, 'MyObject');
   end;
 begin
   ExpectedException := EEnsureParameterNilException;
@@ -61,7 +61,7 @@ end;
 procedure TestTEnsure.TestNonEmptyStringParameterNotEmpty;
   procedure Foo(const MyString : String);
   begin
-    TEnsure.ParameterNotEmpty(MyString, 'MyString');
+    TEnsure.String.NotEmpty(MyString, 'MyString');
   end;
 begin
   Foo('Hello');
@@ -70,7 +70,7 @@ end;
 procedure TestTEnsure.TestNonNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.ParameterAssigned<TObject>(MyObject, 'MyObject');
+    TEnsure.InstanceOf<TObject>.IsAssigned(MyObject, 'MyObject');
   end;
 var
   MyObj : TObject;
@@ -88,4 +88,5 @@ initialization
   // Register any test cases with the test runner
   RegisterTest(TestTEnsure.Suite);
 end.
+
 

@@ -22,6 +22,7 @@ uses
 {$R *.RES}
 
 begin
+  ReportMemoryLeaksOnShutdown := True;
   DUnitTestRunner.RunRegisteredTests;
 end.
 
