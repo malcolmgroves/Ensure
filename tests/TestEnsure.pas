@@ -22,7 +22,7 @@ unit TestEnsure;
 interface
 
 uses
-  TestFramework, Ensure, SysUtils;
+  TestFramework, Ensure.Core, SysUtils;
 
 type
   TestTEnsure = class(TTestCase)
@@ -34,6 +34,8 @@ type
   end;
 
 implementation
+uses
+  Ensure.Exceptions;
 
 procedure TestTEnsure.TestEmptyStringParameterNotEmpty;
   procedure Foo(const MyString : String);
@@ -50,7 +52,6 @@ procedure TestTEnsure.TestNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
     TEnsure.InstanceOf<TObject>.IsAssigned(MyObject, 'MyObject');
-    TEnsure.Instance.IsAssigned<TObject>(MyObject, 'MyObject');
   end;
 begin
   ExpectedException := EEnsureParameterNilException;
