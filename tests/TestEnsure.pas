@@ -22,7 +22,7 @@ unit TestEnsure;
 interface
 
 uses
-  TestFramework, Ensure.Core, SysUtils;
+  TestFramework, Ensure, SysUtils;
 
 type
   TestTEnsure = class(TTestCase)

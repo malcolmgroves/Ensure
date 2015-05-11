@@ -17,7 +17,7 @@
 {                                                    }
 {****************************************************}
 
-unit Ensure.Core;
+unit Ensure;
 
 interface
 uses
