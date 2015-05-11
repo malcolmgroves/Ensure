@@ -17,8 +17,7 @@ program EnsureTests;
 uses
   DUnitTestRunner,
   Ensure in '..\Ensure.pas',
-  TestEnsure in 'TestEnsure.pas',
-  Ensure.Exceptions in '..\Ensure.Exceptions.pas';
+  TestEnsure in 'TestEnsure.pas';
 
 {$R *.RES}
 

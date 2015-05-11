@@ -24,6 +24,19 @@ uses
   SysUtils;
 
 type
+  // Exceptions
+  EEnsureException = class(Exception);
+  EEnsureInstanceException = class(EEnsureException);
+  EEnsureStringException = class(EEnsureException);
+  EEnsurePathException = class(EEnsureException)
+  private
+    FPath : string;
+  public
+    constructor Create(Path : string); reintroduce;
+    property Path : string read FPath;
+  end;
+  EEnsureDateException = class(EEnsureException);
+
   TInstanceTests<T : class> = record
   private
     FSubject : T;
@@ -72,7 +85,7 @@ type
 
 implementation
 uses
-  IOUtils, Ensure.Exceptions, System.DateUtils, System.Types;
+  IOUtils, System.DateUtils, System.Types;
 
 
 { Ensure }
@@ -181,6 +194,14 @@ begin
     raise EEnsureInstanceException.Create(Format('%s is nil', [FSubjectName]));
 
   Result := FSubject;
+end;
+
+{ EEnsurePathException }
+
+constructor EEnsurePathException.Create(Path: string);
+begin
+  inherited Create('Path not found : ' + Path);
+  FPath := Path;
 end;
 
 end.

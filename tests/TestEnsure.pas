@@ -38,7 +38,7 @@ type
 
 implementation
 uses
-  Ensure.Exceptions, DateUtils;
+  DateUtils;
 
 procedure TestTEnsure.TestDateTimeNotLaterThan;
 begin

@@ -92,7 +92,6 @@
         </DelphiCompile>
         <DCCReference Include="..\Ensure.pas"/>
         <DCCReference Include="TestEnsure.pas"/>
-        <DCCReference Include="..\Ensure.Exceptions.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
