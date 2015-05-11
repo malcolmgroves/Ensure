@@ -6,25 +6,23 @@ uses
 
 type
   EEnsureException = class(Exception);
-  EEnsureParameterException = class(EEnsureException);
-  EEnsureParameterNilException = class(EEnsureParameterException);
-  EEnsureParameterEmptyException = class(EEnsureParameterException);
-  EEnsureFileException = class(EEnsureException)
+  EEnsureInstanceException = class(EEnsureException);
+  EEnsureStringException = class(EEnsureException);
+  EEnsurePathException = class(EEnsureException)
   private
     FPath : string;
   public
     constructor Create(Path : string); reintroduce;
     property Path : string read FPath;
   end;
-  EEnsurePathNotFound = class(EEnsureFileException);
-  EEnsurePathNotEmpty = class(EEnsureFileException);
+  EEnsureDateException = class(EEnsureException);
 
 
 implementation
 
 { EEnsurePathNotFound }
 
-constructor EEnsureFileException.Create(Path: string);
+constructor EEnsurePathException.Create(Path: string);
 begin
   inherited Create('Path not found : ' + Path);
   FPath := Path;

@@ -31,19 +31,42 @@ type
     procedure TestNonNilClassParameterAssigned;
     procedure TestEmptyStringParameterNotEmpty;
     procedure TestNonEmptyStringParameterNotEmpty;
+    procedure TestDateTimeNotLaterThanLaterThan;
+    procedure TestDateTimeNotLaterThan;
+    procedure TestDateTimeNotLaterThanSame;
   end;
 
 implementation
 uses
-  Ensure.Exceptions;
+  Ensure.Exceptions, DateUtils;
+
+procedure TestTEnsure.TestDateTimeNotLaterThan;
+begin
+  TEnsure.DateTime(Now).NotLaterThan(IncDay(Now, 1));
+end;
+
+procedure TestTEnsure.TestDateTimeNotLaterThanLaterThan;
+begin
+  ExpectedException := EEnsureDateException;
+  TEnsure.DateTime(IncDay(Now, 1)).NotLaterThan(Now);
+  StopExpectingException;
+end;
+
+procedure TestTEnsure.TestDateTimeNotLaterThanSame;
+var
+  LDate : TDateTime;
+begin
+  LDate := Now;
+  TEnsure.DateTime(LDate).NotLaterThan(LDate);
+end;
 
 procedure TestTEnsure.TestEmptyStringParameterNotEmpty;
   procedure Foo(const MyString : String);
   begin
-    TEnsure.String.NotEmpty(MyString, 'MyString');
+    TEnsure.String(MyString).NotEmpty;
   end;
 begin
-  ExpectedException := EEnsureParameterEmptyException;
+  ExpectedException := EEnsureStringException;
   Foo('');
   StopExpectingException;
 end;
@@ -51,10 +74,10 @@ end;
 procedure TestTEnsure.TestNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.InstanceOf<TObject>.IsAssigned(MyObject, 'MyObject');
+    TEnsure.InstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
   end;
 begin
-  ExpectedException := EEnsureParameterNilException;
+  ExpectedException := EEnsureInstanceException;
   Foo(nil);
   StopExpectingException;
 end;
@@ -63,7 +86,7 @@ end;
 procedure TestTEnsure.TestNonEmptyStringParameterNotEmpty;
   procedure Foo(const MyString : String);
   begin
-    TEnsure.String.NotEmpty(MyString, 'MyString');
+    TEnsure.String(MyString, 'MyString').NotEmpty;
   end;
 begin
   Foo('Hello');
@@ -72,7 +95,7 @@ end;
 procedure TestTEnsure.TestNonNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.InstanceOf<TObject>.IsAssigned(MyObject, 'MyObject');
+    TEnsure.InstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
   end;
 var
   MyObj : TObject;
