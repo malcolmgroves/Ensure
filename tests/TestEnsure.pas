@@ -34,11 +34,24 @@ type
     procedure TestDateTimeNotLaterThanLaterThan;
     procedure TestDateTimeNotLaterThan;
     procedure TestDateTimeNotLaterThanSame;
+    procedure TestNilInterfaceIsAssigned;
+    procedure TestNonNilInterfaceIsAssigned;
+    procedure TestIntegerInRange;
+    procedure TestIntegerInRangeFails;
   end;
 
 implementation
 uses
   DateUtils;
+
+type
+  IFoo = interface
+    procedure Bar;
+  end;
+  TFoo = class (TInterfacedObject, IFoo)
+  public
+    procedure Bar;
+  end;
 
 procedure TestTEnsure.TestDateTimeNotLaterThan;
 begin
@@ -71,10 +84,22 @@ begin
   StopExpectingException;
 end;
 
+procedure TestTEnsure.TestIntegerInRange;
+begin
+  TEnsure.Integer(5).InRange(3, 6);
+end;
+
+procedure TestTEnsure.TestIntegerInRangeFails;
+begin
+  ExpectedException := EEnsureIntegerException;
+  TEnsure.Integer(5).InRange(6, 10);
+  StopExpectingException;
+end;
+
 procedure TestTEnsure.TestNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.InstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
+    TEnsure.ClassInstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
   end;
 begin
   ExpectedException := EEnsureInstanceException;
@@ -82,6 +107,16 @@ begin
   StopExpectingException;
 end;
 
+
+procedure TestTEnsure.TestNilInterfaceIsAssigned;
+var
+  LFoo : IFoo;
+begin
+  LFoo := nil;
+  ExpectedException := EEnsureInstanceException;
+  TEnsure.InterfaceInstanceOf<IFoo>(LFoo).IsAssigned;
+  StopExpectingException;
+end;
 
 procedure TestTEnsure.TestNonEmptyStringParameterNotEmpty;
   procedure Foo(const MyString : String);
@@ -95,7 +130,7 @@ end;
 procedure TestTEnsure.TestNonNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.InstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
+    TEnsure.ClassInstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
   end;
 var
   MyObj : TObject;
@@ -108,6 +143,21 @@ begin
   end;
 end;
 
+
+procedure TestTEnsure.TestNonNilInterfaceIsAssigned;
+var
+  LFoo : IFoo;
+begin
+  LFoo := TFoo.Create;
+  TEnsure.InterfaceInstanceOf<IFoo>(LFoo).IsAssigned;
+end;
+
+{ TFoo }
+
+procedure TFoo.Bar;
+begin
+  //
+end;
 
 initialization
   // Register any test cases with the test runner

@@ -36,8 +36,18 @@ type
     property Path : string read FPath;
   end;
   EEnsureDateException = class(EEnsureException);
+  EEnsureIntegerException = class(EEnsureException);
 
-  TInstanceTests<T : class> = record
+  TClassInstanceTests<T : class> = record
+  private
+    FSubject : T;
+    FSubjectName : string;
+  public
+    constructor Create(const Subject : T; const Name : string);
+    function IsAssigned : T;
+  end;
+
+  TInterfaceInstanceTests<T : IInterface> = record
   private
     FSubject : T;
     FSubjectName : string;
@@ -53,6 +63,15 @@ type
   public
     constructor Create(const Subject : string; const Name : string);
     function NotEmpty : string;
+  end;
+
+  TIntegerTests = record
+  private
+    FSubject : Integer;
+    FSubjectName : string;
+  public
+    constructor Create(const Subject : Integer; const Name : string);
+    function InRange(const Low, High : Integer) : Integer;
   end;
 
   TDateTimeTests = record
@@ -76,12 +95,13 @@ type
 
   TEnsure = class
   public
-    class function InstanceOf<T : class>(Subject : T; const Name : string = '') : TInstanceTests<T>;
+    class function ClassInstanceOf<T : class>(Subject : T; const Name : string = '') : TClassInstanceTests<T>;
+    class function InterfaceInstanceOf<T : IInterface>(Subject : T; const Name : string = 'Subject') : TInterfaceInstanceTests<T>;
     class function &String(const Subject : string; const Name : string = 'Subject'): TStringTests;
     class function DateTime(const Subject : TDateTime; const Name : string = 'Subject') : TDateTimeTests;
     class function Directory(const Path : string; const Name : string = 'Subject'): TDirectoryTests;
+    class function Integer(const Subject : Integer; const Name : string = 'Subject'): TIntegerTests;
   end;
-
 
 implementation
 uses
@@ -91,7 +111,7 @@ uses
 { Ensure }
 
 
-class function TEnsure.InstanceOf<T>(Subject : T; const Name : string) : TInstanceTests<T>;
+class function TEnsure.ClassInstanceOf<T>(Subject : T; const Name : string) : TClassInstanceTests<T>;
 var
   LName : string;
 begin
@@ -99,7 +119,7 @@ begin
     LName := T.Classname
   else
     LName := Name;
-  Result := TInstanceTests<T>.Create(Subject, LName);
+  Result := TClassInstanceTests<T>.Create(Subject, LName);
 end;
 
 class function TEnsure.&String(const Subject : string; const Name : string) : TStringTests;
@@ -118,7 +138,19 @@ begin
 end;
 
 
-constructor TInstanceTests<T>.Create(const Subject: T; const Name: string);
+class function TEnsure.Integer(const Subject: Integer;
+  const Name: string): TIntegerTests;
+begin
+  Result := TIntegerTests.Create(Subject, Name);
+end;
+
+class function TEnsure.InterfaceInstanceOf<T>(Subject: T;
+  const Name: string): TInterfaceInstanceTests<T>;
+begin
+  Result := TInterfaceInstanceTests<T>.Create(Subject, Name);
+end;
+
+constructor TClassInstanceTests<T>.Create(const Subject: T; const Name: string);
 begin
   FSubject := Subject;
   FSubjectName := Name;
@@ -188,7 +220,7 @@ begin
   Result := FSubject;
 end;
 
-function TInstanceTests<T>.IsAssigned: T;
+function TClassInstanceTests<T>.IsAssigned: T;
 begin
   if not Assigned(FSubject) then
     raise EEnsureInstanceException.Create(Format('%s is nil', [FSubjectName]));
@@ -202,6 +234,40 @@ constructor EEnsurePathException.Create(Path: string);
 begin
   inherited Create('Path not found : ' + Path);
   FPath := Path;
+end;
+
+{ TInterfaceInstanceTests<T> }
+
+constructor TInterfaceInstanceTests<T>.Create(const Subject: T;
+  const Name: string);
+begin
+  FSubject := Subject;
+  FSubjectName := Name;
+end;
+
+function TInterfaceInstanceTests<T>.IsAssigned: T;
+begin
+  if not Assigned(FSubject) then
+    raise EEnsureInstanceException.Create(Format('%s is nil', [FSubjectName]));
+
+  Result := FSubject;
+end;
+
+{ TIntegerTests }
+
+constructor TIntegerTests.Create(const Subject: Integer; const Name: string);
+begin
+  FSubject := Subject;
+  FSubjectName := Name;
+end;
+
+function TIntegerTests.InRange(const Low, High: Integer): Integer;
+begin
+  if (Low > FSubject) or (High < FSubject) then
+    raise EEnsureIntegerException.Create(Format('%s(%d) is outside range Low(%d) to High(%d)',
+                                                [FSubjectName, FSubject, Low, High]));
+
+  Result := FSubject;
 end;
 
 end.
