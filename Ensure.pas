@@ -38,7 +38,7 @@ type
   EEnsureDateException = class(EEnsureException);
   EEnsureIntegerException = class(EEnsureException);
 
-  TClassInstanceTests<T : class> = record
+  TClassTests<T : class> = record
   private
     FSubject : T;
     FSubjectName : string;
@@ -47,7 +47,7 @@ type
     function IsAssigned : T;
   end;
 
-  TInterfaceInstanceTests<T : IInterface> = record
+  TInterfaceTests<T : IInterface> = record
   private
     FSubject : T;
     FSubjectName : string;
@@ -95,8 +95,8 @@ type
 
   TEnsure = class
   public
-    class function ClassInstanceOf<T : class>(Subject : T; const Name : string = '') : TClassInstanceTests<T>;
-    class function InterfaceInstanceOf<T : IInterface>(Subject : T; const Name : string = 'Subject') : TInterfaceInstanceTests<T>;
+    class function &Class<T : class>(Subject : T; const Name : string = '') : TClassTests<T>;
+    class function &Interface<T : IInterface>(Subject : T; const Name : string = 'Subject') : TInterfaceTests<T>;
     class function &String(const Subject : string; const Name : string = 'Subject'): TStringTests;
     class function DateTime(const Subject : TDateTime; const Name : string = 'Subject') : TDateTimeTests;
     class function Directory(const Path : string; const Name : string = 'Subject'): TDirectoryTests;
@@ -111,7 +111,7 @@ uses
 { Ensure }
 
 
-class function TEnsure.ClassInstanceOf<T>(Subject : T; const Name : string) : TClassInstanceTests<T>;
+class function TEnsure.&Class<T>(Subject : T; const Name : string) : TClassTests<T>;
 var
   LName : string;
 begin
@@ -119,7 +119,7 @@ begin
     LName := T.Classname
   else
     LName := Name;
-  Result := TClassInstanceTests<T>.Create(Subject, LName);
+  Result := TClassTests<T>.Create(Subject, LName);
 end;
 
 class function TEnsure.&String(const Subject : string; const Name : string) : TStringTests;
@@ -144,13 +144,13 @@ begin
   Result := TIntegerTests.Create(Subject, Name);
 end;
 
-class function TEnsure.InterfaceInstanceOf<T>(Subject: T;
-  const Name: string): TInterfaceInstanceTests<T>;
+class function TEnsure.&Interface<T>(Subject: T;
+  const Name: string): TInterfaceTests<T>;
 begin
-  Result := TInterfaceInstanceTests<T>.Create(Subject, Name);
+  Result := TInterfaceTests<T>.Create(Subject, Name);
 end;
 
-constructor TClassInstanceTests<T>.Create(const Subject: T; const Name: string);
+constructor TClassTests<T>.Create(const Subject: T; const Name: string);
 begin
   FSubject := Subject;
   FSubjectName := Name;
@@ -220,7 +220,7 @@ begin
   Result := FSubject;
 end;
 
-function TClassInstanceTests<T>.IsAssigned: T;
+function TClassTests<T>.IsAssigned: T;
 begin
   if not Assigned(FSubject) then
     raise EEnsureInstanceException.Create(Format('%s is nil', [FSubjectName]));
@@ -238,14 +238,14 @@ end;
 
 { TInterfaceInstanceTests<T> }
 
-constructor TInterfaceInstanceTests<T>.Create(const Subject: T;
+constructor TInterfaceTests<T>.Create(const Subject: T;
   const Name: string);
 begin
   FSubject := Subject;
   FSubjectName := Name;
 end;
 
-function TInterfaceInstanceTests<T>.IsAssigned: T;
+function TInterfaceTests<T>.IsAssigned: T;
 begin
   if not Assigned(FSubject) then
     raise EEnsureInstanceException.Create(Format('%s is nil', [FSubjectName]));

@@ -99,7 +99,7 @@ end;
 procedure TestTEnsure.TestNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.ClassInstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
+    TEnsure.Class<TObject>(MyObject, 'MyObject').IsAssigned;
   end;
 begin
   ExpectedException := EEnsureInstanceException;
@@ -114,7 +114,7 @@ var
 begin
   LFoo := nil;
   ExpectedException := EEnsureInstanceException;
-  TEnsure.InterfaceInstanceOf<IFoo>(LFoo).IsAssigned;
+  TEnsure.Interface<IFoo>(LFoo).IsAssigned;
   StopExpectingException;
 end;
 
@@ -130,7 +130,7 @@ end;
 procedure TestTEnsure.TestNonNilClassParameterAssigned;
   procedure Foo(MyObject : TObject);
   begin
-    TEnsure.ClassInstanceOf<TObject>(MyObject, 'MyObject').IsAssigned;
+    TEnsure.Class<TObject>(MyObject, 'MyObject').IsAssigned;
   end;
 var
   MyObj : TObject;
@@ -149,7 +149,7 @@ var
   LFoo : IFoo;
 begin
   LFoo := TFoo.Create;
-  TEnsure.InterfaceInstanceOf<IFoo>(LFoo).IsAssigned;
+  TEnsure.Interface<IFoo>(LFoo).IsAssigned;
 end;
 
 { TFoo }
