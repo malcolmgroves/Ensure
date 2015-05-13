@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{E8FE7AE0-6669-4A77-82A2-C550DEDB7C97}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="EnsureTests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\EnsureXE8.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EnsureTests">
+        <MSBuild Projects="EnsureTests.dproj"/>
+    </Target>
+    <Target Name="EnsureTests:Clean">
+        <MSBuild Projects="EnsureTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EnsureTests:Make">
+        <MSBuild Projects="EnsureTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EnsureXE8">
+        <MSBuild Projects="..\EnsureXE8.dproj"/>
+    </Target>
+    <Target Name="EnsureXE8:Clean">
+        <MSBuild Projects="..\EnsureXE8.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EnsureXE8:Make">
+        <MSBuild Projects="..\EnsureXE8.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EnsureTests;EnsureXE8"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EnsureTests:Clean;EnsureXE8:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EnsureTests:Make;EnsureXE8:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
