@@ -1,4 +1,4 @@
-package EnsureXE8;
+package EnsureR;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -33,6 +33,6 @@ requires
   rtl;
 
 contains
-  Ensure in 'Ensure.pas';
+  Ensure in '..\..\Ensure.pas';
 
 end.
